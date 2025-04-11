@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.QiyexinxiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.qiyexinxi_name as qiyexinxiName
+        ,a.qiyexinxi_number as qiyexinxiNumber
+        ,a.qiyexinxi_qiangxiang as qiyexinxiQiangxiang
+        ,a.qiyexinxi_hangye as qiyexinxiHangye
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.QiyexinxiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM qiyexinxi  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.qiyexinxiName != '' and params.qiyexinxiName != null and params.qiyexinxiName != 'null' ">
+                and a.qiyexinxi_name like CONCAT('%',#{params.qiyexinxiName},'%')
+            </if>
+            <if test="params.qiyexinxiNumberStart != null and params.qiyexinxiNumberStart != ''">
+                <![CDATA[  and a.qiyexinxi_number >= #{params.qiyexinxiNumberStart}   ]]>
+            </if>
+            <if test="params.qiyexinxiNumberEnd != null and params.qiyexinxiNumberEnd != ''">
+                <![CDATA[  and a.qiyexinxi_number <= #{params.qiyexinxiNumberEnd}   ]]>
+            </if>
+             <if test="params.qiyexinxiNumber != null and params.qiyexinxiNumber != ''">
+                and a.qiyexinxi_number = #{params.qiyexinxiNumber}
+             </if>
+            <if test=" params.qiyexinxiQiangxiang != '' and params.qiyexinxiQiangxiang != null and params.qiyexinxiQiangxiang != 'null' ">
+                and a.qiyexinxi_qiangxiang like CONCAT('%',#{params.qiyexinxiQiangxiang},'%')
+            </if>
+            <if test=" params.qiyexinxiHangye != '' and params.qiyexinxiHangye != null and params.qiyexinxiHangye != 'null' ">
+                and a.qiyexinxi_hangye like CONCAT('%',#{params.qiyexinxiHangye},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
